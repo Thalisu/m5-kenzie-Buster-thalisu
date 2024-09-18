@@ -29,6 +29,7 @@ class UserSerializer(serializers.Serializer):
     first_name = serializers.CharField(max_length=50)
     last_name = serializers.CharField(max_length=50)
     is_employee = serializers.BooleanField(default=False)
+    is_superuser = serializers.BooleanField(default=False)
     password = serializers.CharField(write_only=True)
 
     def create(self, validated_data: dict):

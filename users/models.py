@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, password, is_employee, **extra_fields):
+    def create_user(self, email, password, is_employee=False, **extra_fields):
         if not email:
             raise ValueError("O email é obrigatório")
 

@@ -16,6 +16,19 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+    def create_superuser(self, email, password, **extra_fields):
+        if not email:
+            raise ValueError("O email é obrigatório")
+
+        email = self.normalize_email(email)
+        extra_fields.setdefault("is_active", True)
+        extra_fields.setdefault("is_superuser", True)
+
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
 
 class User(AbstractUser):
     email = models.EmailField(unique=True, max_length=127)

@@ -3,13 +3,13 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 from .serializers import MovieSerializer
 from .models import Movie
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from .permissions import IsAdminOrReadOnly
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 class MovieView(APIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAdminOrReadOnly]
 
     def post(self, request: Request) -> Response:
         serializer = MovieSerializer(data=request.data)
@@ -35,19 +35,19 @@ class MovieView(APIView):
 
 class OneMovieView(APIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAdminOrReadOnly]
 
-    def get(self, request: Request, team_id) -> Response:
+    def get(self, request: Request, movie_id) -> Response:
         try:
-            MOVIE = Movie.objects.get(pk=team_id)
+            MOVIE = Movie.objects.get(pk=movie_id)
         except (Movie.DoesNotExist, ValueError):
             return Response({"message": "Movie not found"}, status=404)
 
         return Response(MovieSerializer(MOVIE).data)
 
-    def delete(self, request: Request, team_id) -> Response:
+    def delete(self, request: Request, movie_id) -> Response:
         try:
-            Movie.objects.get(pk=team_id).delete()
+            Movie.objects.get(pk=movie_id).delete()
         except (Movie.DoesNotExist, ValueError):
             return Response({"message": "Movie not found"}, status=404)
 

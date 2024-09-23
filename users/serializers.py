@@ -33,5 +33,12 @@ class UserSerializer(serializers.Serializer):
     is_superuser = serializers.BooleanField(read_only=True)
     password = serializers.CharField(write_only=True)
 
+    def update(self, instance: User, validated_data: dict):
+        for key, value in validated_data.items():
+            setattr(instance, key, value)
+        instance.set_password(validated_data["password"])
+        instance.save()
+        return instance
+
     def create(self, validated_data: dict):
         return User.objects.create_user(**validated_data)

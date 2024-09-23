@@ -39,3 +39,24 @@ class OneUserView(APIView):
 
         return Response(UserSerializer(USER).data)
 
+    def patch(self, request: Request, user_id: int) -> Response:
+        try:
+            USER = User.objects.get(pk=user_id)
+            self.check_object_permissions(request, USER)
+        except (User.DoesNotExist, ValueError):
+            return Response({"message": "User not found"}, status=404)
+
+        serializer = UserSerializer(USER, data=request.data, partial=True)
+        try:
+            serializer.is_valid(raise_exception=True)
+        except Exception as e:
+            return Response(e.args[0], status=400)
+
+        try:
+            USER = serializer.save()
+        except Exception as e:
+            return Response(str(e), status=500)
+
+        serializer = UserSerializer(USER)
+
+        return Response(serializer.data, status=200)

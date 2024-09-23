@@ -4,7 +4,9 @@ from users.models import User
 
 
 class IsEmployeeOrSameUser(permissions.BasePermission):
-    def has_permission(self, request: Request, view: View, c_user: User):
+    def has_object_permission(
+        self, request: Request, view: View, c_user: User = None
+    ):
         if type(request.user) is User:
             user = request.user
             return bool(

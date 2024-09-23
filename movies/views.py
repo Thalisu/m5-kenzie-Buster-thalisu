@@ -5,6 +5,12 @@ from .serializers import MovieSerializer
 from .models import Movie
 from .permissions import IsAdminOrReadOnly
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.pagination import PageNumberPagination
+
+
+class MoviePagination(PageNumberPagination):
+    page_size = 2
+    page_size_query_param = "page_size"
 
 
 class MovieView(APIView):
@@ -30,7 +36,10 @@ class MovieView(APIView):
 
     def get(self, request: Request) -> Response:
         movies = Movie.objects.all()
-        return Response([MovieSerializer(movie).data for movie in movies])
+        paginator = MoviePagination()
+        page = paginator.paginate_queryset(movies, request)
+        serializer = MovieSerializer(page, many=True)
+        return paginator.get_paginated_response(serializer.data)
 
 
 class OneMovieView(APIView):
